@@ -1,0 +1,6 @@
+.container {
+    text-align: center;
+    font-weight: bold;
+    font-size: clamp(8rem, 25vw, 16rem);
+    color: var(--text-default);
+}

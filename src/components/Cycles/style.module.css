@@ -1,0 +1,32 @@
+.cycles {
+
+}
+
+.cycleDots {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.4rem
+}
+
+.cycleDot {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+}
+
+.cycleDot:hover {
+    transform: scale(1.2)
+}
+
+.focusTime {
+    background-color: var(--success);
+}
+
+.shortRest {
+    background-color: var(--warning);
+}
+
+.longRest {
+    background-color: var(--info)
+}
