@@ -1,3 +1,5 @@
+import type { ModelPomodoroConfig } from "./ModelPomodoroConfig"
+
 export type ModelTask = {
     id: string
     name: string
@@ -5,6 +7,6 @@ export type ModelTask = {
     startDate: number
     finishDate: number | null
     interruptDate: number | null
-    type: 'focusTime' | 'shortRest' | 'longRest'
+    type: keyof ModelPomodoroConfig
 
 }
