@@ -4,10 +4,13 @@ type ButtonProps = {
     icon: React.ReactNode
 } & React.ComponentProps<'button'>
 
-export function Button({icon, ...props}: ButtonProps) {
+export function Button({
+    icon,
+    color = 'green',
+    ...props}: ButtonProps) {
     return (
-    <button className={style.button} {...props}>
-        {icon}
-    </button>
+        <button className={`${style.button} ${style[color]}`} {...props}>
+            {icon}
+        </button>
     )
 }

@@ -1,4 +1,4 @@
-import { PlayCircleIcon } from 'lucide-react'
+import { PauseCircleIcon, PlayCircleIcon } from 'lucide-react'
 import { Button } from '../Button'
 import { Cycles } from '../Cycles'
 import { Input } from '../Input'
@@ -10,12 +10,30 @@ import { useTaskContext } from '../../contexts/TaskContext/useTaskContext'
 import { getNextCycle } from '../../utils/getNextCycle'
 import { getNextCycleType } from '../../utils/getNextCycleType'
 import { formatSecondsToMinutes } from '../../utils/formatSecondsToMinutes'
+import { EnumTaskActions } from '../../enums/EnumTaskActions'
+import { taskReducer } from '../../contexts/TaskContext/taskReducer'
 
 export function TaskInclude() {
-    const {state, setState} = useTaskContext()
+    const {state, dispatch} = useTaskContext()
     const taskNameInput = useRef<HTMLInputElement>(null)
     const nextCycle = getNextCycle(state.currentCycle)
     const nextCycleType = getNextCycleType(nextCycle)
+    const tipsForActiveTask = {
+        focusTime:
+            <span><b>Foque</b> por <b>{state.pomodoConfig.focusTime} minutos</b></span>,
+        shortRest:
+            <span><b>Descanse</b> por <b>{state.pomodoConfig.shortRest} minutos</b></span>,
+        longRest:
+            <span><b>Descanse</b> por <b>{state.pomodoConfig.longRest} minutos</b></span>
+    }
+    const tipsForNoActiveTask = {
+        focusTime:
+            <span>No próximo ciclo você deve <b>focar</b> por <b>{state.pomodoConfig.focusTime} minutos</b></span>,
+        shortRest:
+            <span>No próximo ciclo você deve <b>descansar</b> por <b>{state.pomodoConfig.shortRest} minutos</b></span>,
+        longRest:
+            <span>No próximo ciclo você deve <b>descansar</b> por <b>{state.pomodoConfig.longRest} minutos</b></span>
+    }
 
     function handleSubmitTask(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -38,20 +56,13 @@ export function TaskInclude() {
             type: nextCycleType
         }
 
-        const secondsRemaining = newTask.duration * 60
-        const minutesRemaining = formatSecondsToMinutes(secondsRemaining)
-
-        setState(prevState => {
-            return {
-                ...prevState,
-                activeTask: newTask,
-                currentCycle: nextCycle,
-                secondsRemaining,
-                formattedSecondsRemaining: minutesRemaining,
-                tasks: [...prevState.tasks, newTask]
-            }
-        })
+        dispatch({type: EnumTaskActions.START_TASK, payload: newTask})
     }
+
+    function handleInterruptTask() {
+        dispatch({type: EnumTaskActions.INTERRUPT_TASK})
+    }
+
     return (
         <form onSubmit={handleSubmitTask} className="taskForm" action="POST">
             <div className={style.formRow}>
@@ -62,8 +73,10 @@ export function TaskInclude() {
                        ref={taskNameInput}
                        disabled={Boolean(state.activeTask)}/>
             </div>
+            
             <div className={style.formRow}>
-                <span>Lorem ipsum dolor sit amet.</span>
+                {state.activeTask && tipsForActiveTask[getNextCycleType(state.currentCycle)]}
+                {!state.activeTask && tipsForNoActiveTask[nextCycleType]}
             </div>
 
             {state.currentCycle !== 0 && (
@@ -73,7 +86,23 @@ export function TaskInclude() {
             )}
 
             <div className={style.formRow}>
-                <Button icon={<PlayCircleIcon />}/>
+                {!state.activeTask ? (
+                    <Button
+                        type="submit"
+                        key="newTaskButton"
+                        icon={<PlayCircleIcon />}
+                        aria-label="Iniciar nova tarefa"
+                        title="Iniciar nova tarefa"/>
+                    ) : (
+                    <Button
+                        type="button"
+                        key="interruptTaskButton"
+                        icon={<PauseCircleIcon />}
+                        onClick={handleInterruptTask}
+                        color="red"
+                        aria-label="Interromper tarefa"
+                        title="Interromper tarefa"/>
+                )}
             </div>
         </form>
     )

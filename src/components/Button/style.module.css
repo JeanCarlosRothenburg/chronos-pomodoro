@@ -21,3 +21,13 @@
     width: 3.2rem;
     height: 3.2rem;
 }
+
+.green {
+  background: var(--primary);
+  color: var(--text-over-primary);
+}
+
+.red {
+  background: var(--error);
+  color: var(--text-over-error);
+}
