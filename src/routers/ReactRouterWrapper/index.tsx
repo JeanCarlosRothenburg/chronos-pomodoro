@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import { HashRouter, Route, Routes, useLocation } from "react-router";
 import { useEffect } from "react";
 import { Home } from "../../pages/Home";
 import { History } from "../../pages/History";
@@ -17,15 +17,15 @@ function ScrollToTop() {
 }
 export function RouterWrapper() {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Routes>
-                <Route path='/' element={<Home />} />
+                <Route path='#/' element={<Home />} />
                 <Route path='/history' element={<History />} />
                 <Route path='/settings' element={<Settings />} />
                 <Route path='/about-pomodoro' element={<AboutPomodoro />} />
                 <Route path='*' element={<NotFound />} />
             </Routes>
             <ScrollToTop />
-        </BrowserRouter>
+        </HashRouter>
     )
 }
