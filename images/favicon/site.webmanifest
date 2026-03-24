@@ -16,7 +16,7 @@
       "purpose": "maskable"
     },
     {
-      "src": "/images/favicon/favicon.svg",
+      "src": "./images/favicon/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }
