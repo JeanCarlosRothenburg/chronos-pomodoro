@@ -1,0 +1,1 @@
+(function(){let e=!1;self.onmessage=function(t){if(e)return;e=!0;let{activeTask:n,secondsRemaining:r}=t.data,i=n.startDate+r*1e3,a=Date.now(),o=Math.ceil((i-a)/1e3);function s(){self.postMessage(o);let e=Date.now();o=Math.floor((i-e)/1e3),setTimeout(s,1e3)}s()}})();
