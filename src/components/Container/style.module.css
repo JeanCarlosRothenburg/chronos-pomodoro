@@ -11,6 +11,6 @@
     margin: 3.2rem;
 }
 
-span {
+span, p, h1, input {
     text-align: center;
 }

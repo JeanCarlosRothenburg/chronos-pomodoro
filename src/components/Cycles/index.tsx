@@ -1,6 +1,7 @@
 import { useTaskContext } from '../../contexts/TaskContext/useTaskContext'
 import { EnumCycle } from '../../enums/EnumCycle'
 import { getNextCycleType } from '../../utils/getNextCycleType'
+import { CycleDot } from '../CycleDot'
 import style from './style.module.css'
 
 export function Cycles() {
@@ -13,14 +14,12 @@ export function Cycles() {
                 {
                     cycles.map((value, index) => {
                         const cycleType = getNextCycleType(value)
-                        const cycleDescription = EnumCycle[cycleType]
                         return (
-                            <span
-                                className={`${style.cycleDot} ${style[cycleType]}`}
+                            <CycleDot
                                 key={index}
-                                title={cycleDescription}
-                                aria-label={cycleDescription}
-                            ></span>)
+                                cycleType={cycleType}
+                                cycleDescription={EnumCycle[cycleType]}
+                            ></CycleDot>)
                     })
                 }
             </div>

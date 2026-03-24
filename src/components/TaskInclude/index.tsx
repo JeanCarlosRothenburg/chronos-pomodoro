@@ -9,31 +9,16 @@ import type { ModelTask } from '../../models/ModelTask'
 import { useTaskContext } from '../../contexts/TaskContext/useTaskContext'
 import { getNextCycle } from '../../utils/getNextCycle'
 import { getNextCycleType } from '../../utils/getNextCycleType'
-import { formatSecondsToMinutes } from '../../utils/formatSecondsToMinutes'
 import { EnumTaskActions } from '../../enums/EnumTaskActions'
-import { taskReducer } from '../../contexts/TaskContext/taskReducer'
+import { CycleExplain } from '../CycleExplain'
+import { ToastifyAdapter } from '../../adapters/ToastifyAdapter'
 
 export function TaskInclude() {
     const {state, dispatch} = useTaskContext()
     const taskNameInput = useRef<HTMLInputElement>(null)
     const nextCycle = getNextCycle(state.currentCycle)
     const nextCycleType = getNextCycleType(nextCycle)
-    const tipsForActiveTask = {
-        focusTime:
-            <span><b>Foque</b> por <b>{state.pomodoConfig.focusTime} minutos</b></span>,
-        shortRest:
-            <span><b>Descanse</b> por <b>{state.pomodoConfig.shortRest} minutos</b></span>,
-        longRest:
-            <span><b>Descanse</b> por <b>{state.pomodoConfig.longRest} minutos</b></span>
-    }
-    const tipsForNoActiveTask = {
-        focusTime:
-            <span>No próximo ciclo você deve <b>focar</b> por <b>{state.pomodoConfig.focusTime} minutos</b></span>,
-        shortRest:
-            <span>No próximo ciclo você deve <b>descansar</b> por <b>{state.pomodoConfig.shortRest} minutos</b></span>,
-        longRest:
-            <span>No próximo ciclo você deve <b>descansar</b> por <b>{state.pomodoConfig.longRest} minutos</b></span>
-    }
+    const lastTaskName = state.tasks[state.tasks.length - 1]?.name || ''
 
     function handleSubmitTask(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -43,7 +28,8 @@ export function TaskInclude() {
         const taskName = taskNameInput.current.value.trim()
 
         if (!taskName) {
-            alert('Tarefa não informada!')
+            ToastifyAdapter.warning('Tarefa não informada!')
+            return
         }
 
         const newTask: ModelTask = {
@@ -57,10 +43,12 @@ export function TaskInclude() {
         }
 
         dispatch({type: EnumTaskActions.START_TASK, payload: newTask})
+        ToastifyAdapter.sucess("Tarefa iniciada!")
     }
 
     function handleInterruptTask() {
         dispatch({type: EnumTaskActions.INTERRUPT_TASK})
+        ToastifyAdapter.info("Tarefa interrompida!")
     }
 
     return (
@@ -71,12 +59,12 @@ export function TaskInclude() {
                        type="text"
                        placeholder="Estudar React"
                        ref={taskNameInput}
-                       disabled={Boolean(state.activeTask)}/>
+                       disabled={Boolean(state.activeTask)}
+                       defaultValue={lastTaskName}/>
             </div>
             
             <div className={style.formRow}>
-                {state.activeTask && tipsForActiveTask[getNextCycleType(state.currentCycle)]}
-                {!state.activeTask && tipsForNoActiveTask[nextCycleType]}
+                <CycleExplain />
             </div>
 
             {state.currentCycle !== 0 && (

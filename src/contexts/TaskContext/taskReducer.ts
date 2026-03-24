@@ -28,11 +28,46 @@ export function taskReducer(
                 secondsRemaining: 0,
                 formattedSecondsRemaining: '00:00',
                 tasks: state.tasks.map(task => {
-                    if (state.activeTask.id && (state.activeTask.id === task.id)) {
+                    if (state.activeTask?.id === task.id) {
                         return {...task, interruptDate: Date.now()}
                     }
                     return task
                 })
+            }
+        case EnumTaskActions.COUNT_DOWN:
+            return {
+                ...state,
+                secondsRemaining: action.payload.secondsRemaining,
+                formattedSecondsRemaining: formatSecondsToMinutes(
+                    action.payload.secondsRemaining
+                )
+            }
+        case EnumTaskActions.COMPLETE_TASK:
+            return {
+                ...state,
+                activeTask: null,
+                secondsRemaining: 0,
+                formattedSecondsRemaining: '00:00',
+                tasks: state.tasks.map(task => {
+                    if (state.activeTask?.id === task.id) {
+                        return {...task, finishDate: Date.now()}
+                    }
+                    return task
+                })
+            }
+        case EnumTaskActions.RESET_STATE:
+            return {
+                ...state,
+                activeTask: null,
+                secondsRemaining: 0,
+                formattedSecondsRemaining: '00:00',
+                currentCycle: 0,
+                tasks: []
+            }
+        case EnumTaskActions.CHANGE_SETTINGS:
+            return {
+                ...state,
+                pomodoConfig: {...action.payload}
             }
         default:
             return state
